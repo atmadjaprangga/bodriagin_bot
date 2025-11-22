@@ -1,0 +1,13 @@
+# IDE
+.idea/
+.vscode/
+
+# Python cache
+__pycache__/
+handlers/__pycache__/
+*.pyc
+
+# Env (секреты)
+.env
+.env.*
+!.env.example
