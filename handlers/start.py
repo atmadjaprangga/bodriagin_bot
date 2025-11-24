@@ -116,17 +116,17 @@ async def start_calc_callback(callback: CallbackQuery, state: FSMContext):
     await Date.date.set()
     await callback.message.answer('Отправьте свою дату рождения в формате DD.MM.YYYY\n\nПример: 12.02.1992')
 
-# ---- runfunc: обрабатывает ввод даты и вызывает mainfunc из handlers.func ----
+# ---- runfunc: обрабатывает ввод даты и вызывает calculate_numbers из handlers.func ----
 async def runfunc(message: Message, state: FSMContext):
     """
-    Ожидается, что func_mod.mainfunc принимает строку 'DD.MM.YYYY' и возвращает три числовых значения,
-    как это было в оригинальном handlers/func.py: d, s, p = mainfunc(date_str)
+    Используем func_mod.calculate_numbers(date_str) — функция в handlers/func.py,
+    которая возвращает (soul, destiny, purpose).
     """
     text = message.text.strip()
     if len(text) == 10 and DATE_REGEX.match(text):
         try:
-            # вызываем mainfunc через модуль func_mod (без прямого from ... import ...)
-            d, s, p = func_mod.mainfunc(text)
+            # вызываем calculate_numbers через модуль func_mod
+            d, s, p = func_mod.calculate_numbers(text)
             # отправляем длинные тексты постранично (как в оригинале)
             try:
                 if len(text_d.get(d, "")) > 4096:
@@ -149,7 +149,7 @@ async def runfunc(message: Message, state: FSMContext):
             except Exception:
                 logger.exception("Не удалось отправить p_text for p=%s", p)
         except Exception as e:
-            logger.exception("Ошибка при вызове mainfunc: %s", e)
+            logger.exception("Ошибка при вызове calculate_numbers: %s", e)
             await message.answer("Произошла ошибка при расчёте. Проверьте формат даты и попробуйте снова.")
         finally:
             await state.finish()
